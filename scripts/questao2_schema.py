@@ -23,8 +23,8 @@ def classificar_valor(valor):
         # Zero à esquerda indica código, vira TEXT para não perder o zero (Ex: código de barras)
         if len(valor) > 1 and valor[0] == "0":
             return "TEXT"
-        # Acima de 18 dígitos supera o limite do BIGINT (Ex: NFs, com mais de 18 dígitos, não cabem em INTEGER)
-        if len(valor) > 18:
+        # Acima de 10 dígitos supera o limite do INTEGER (Ex: NFs, com mais de 10 dígitos, não cabem em INTEGER)
+        if len(valor) > 10:
             return "TEXT"
         return "INTEGER"
 
