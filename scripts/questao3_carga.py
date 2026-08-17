@@ -16,19 +16,22 @@ CONEXAO = {
 arquivos = sorted(f for f in os.listdir(PASTA_CSV) if f.endswith(".csv"))
 
 conn= psycopg2.connect(**CONEXAO)
-cursor = conn.cursor()
+cursor = conn.cursor() # O cursor é quem executa os comandos dentro da conexão aberta
 
 for arquivo in arquivos:
     tabela = os.path.splitext(arquivo)[0]        # Nome do arquivo sem o final .csv
     caminho = os.path.join(PASTA_CSV, arquivo)  # Caminho completo até o arquivo
 
     with open(caminho, "r", encoding="utf-8") as f:
+        # Copy permite importar dados de um CSV direto para uma tabela do postgres
+        # FROM STDIN indica que os virão do arquivos aberto, HEADER true faz com que ignore a primeira linha (Nome das colunas), campo vazio vai como null
         cursor.copy_expert(
             f"COPY {tabela} FROM STDIN WITH (FORMAT csv, HEADER true)",
             f
         )
     print(f"ok: {tabela}")
 
+# Sem esse commit o postgres descarta tudo quando parar de rodar
 conn.commit()
 cursor.close()
 conn.close()
